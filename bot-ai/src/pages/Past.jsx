@@ -12,19 +12,15 @@ export default function Past() {
     }
   }, []);
 
-  // A helper to see if any message in a conversation has >= the selected rating (or exactly the rating).
-  // Adjust logic as needed (exact match vs. “at least”).
   function conversationMatchesRating(convo) {
     if (!filterRating) return true; // no filter
     const ratingNum = parseInt(filterRating, 10);
-    // If ANY ai message has rating >= ratingNum, or exactly ratingNum.
-    // We'll do “at least”
+
     return convo.messages.some(
       (m) => m.sender === "ai" && m.rating === ratingNum
     );
   }
 
-  // Filter the conversations if a rating is chosen
   const filteredConversations = pastConversations.filter(
     conversationMatchesRating
   );
@@ -91,7 +87,6 @@ export default function Past() {
   );
 }
 
-// Renders one entire conversation in one big tile
 function ConversationTile({ conversation }) {
   return (
     <div
@@ -103,7 +98,6 @@ function ConversationTile({ conversation }) {
     >
       <h3 style={{ marginTop: 0 }}>Saved on {conversation.timestamp}</h3>
 
-      {/* Render each message inside this tile */}
       {conversation.messages.map((m, index) => {
         const bgColor = m.sender === "user" ? "#EAD6FF" : "#E6DBFA";
         const senderName = m.sender === "user" ? "You" : "Soul AI";

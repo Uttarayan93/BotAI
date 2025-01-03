@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // <-- For navigation
+import { useNavigate } from "react-router-dom";
 import NavigationPanel from "../components/NavigationPanel";
 import botImage from "../assets/bot.png";
 import userImage from "../assets/user.png";
 import { questions } from "../sampleData.jsx";
 import { FaThumbsUp, FaThumbsDown, FaStar } from "react-icons/fa";
 
-/** A simple card used for quick prompts at the top */
 function PromptCard({ title, subtitle }) {
   return (
     <div
@@ -24,7 +23,6 @@ function PromptCard({ title, subtitle }) {
   );
 }
 
-/** A reusable star rating component */
 function StarRating({ currentRating, onRate }) {
   const [hover, setHover] = useState(0);
 
@@ -52,7 +50,6 @@ function StarRating({ currentRating, onRate }) {
   );
 }
 
-/** A modal for additional feedback when user clicks "thumbs down" */
 function FeedbackModal({ isOpen, onClose, onSubmit }) {
   const [feedbackText, setFeedbackText] = useState("");
 
@@ -136,7 +133,6 @@ function FeedbackModal({ isOpen, onClose, onSubmit }) {
   );
 }
 
-/** Renders each chat bubble (user or AI) */
 function ChatBubble({
   index,
   sender,
@@ -159,10 +155,9 @@ function ChatBubble({
         alignItems: "flex-start",
         gap: "10px",
         maxWidth: "60%",
-        alignSelf: "flex-start", // pinned left for both
+        alignSelf: "flex-start",
       }}
     >
-      {/* Avatar (always on the left) */}
       <img
         src={avatar}
         alt={sender}
@@ -173,7 +168,6 @@ function ChatBubble({
         }}
       />
 
-      {/* The message bubble */}
       <div
         style={{
           backgroundColor: bubbleColor,
@@ -191,7 +185,6 @@ function ChatBubble({
           {time}
         </div>
 
-        {/* If this is an AI message, show like/dislike + rating/feedback */}
         {sender === "ai" && (
           <div style={{ marginTop: "8px" }}>
             {/* Like & Dislike Buttons */}
@@ -215,7 +208,6 @@ function ChatBubble({
               <FaThumbsDown color="#6F42C1" />
             </span>
 
-            {/* If we have a rating > 0, show the star rating UI */}
             {rating > 0 && (
               <StarRating
                 currentRating={rating}
@@ -223,7 +215,6 @@ function ChatBubble({
               />
             )}
 
-            {/* If we have feedback, show it */}
             {feedback && (
               <div style={{ marginTop: "5px", fontStyle: "italic" }}>
                 Feedback: {feedback}
@@ -243,10 +234,8 @@ export default function HomePage() {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [feedbackTargetIndex, setFeedbackTargetIndex] = useState(null);
 
-  // For navigating to /past
   const navigate = useNavigate();
 
-  // A simple helper to get a response from sampleData
   const getAIResponse = (userText) => {
     const lowerInput = userText.toLowerCase();
     const found = questions.find((q) =>
@@ -256,11 +245,9 @@ export default function HomePage() {
     return "I'm not sure I have an answer for that, but I'm learning!";
   };
 
-  /** Handles user pressing "Ask" */
   const handleAsk = () => {
     if (!inputValue.trim()) return;
 
-    // user message
     const newUserMessage = {
       sender: "user",
       text: inputValue.trim(),
@@ -272,7 +259,6 @@ export default function HomePage() {
       feedback: "",
     };
 
-    // AI reply
     const aiReplyText = getAIResponse(inputValue);
     const newAIMessage = {
       sender: "ai",
@@ -321,35 +307,23 @@ export default function HomePage() {
     setFeedbackTargetIndex(null);
   };
 
-  /**
-   * When "Save" is clicked, we store the *current conversation*
-   * into an array of conversations in localStorage, then go to /past
-   */
   const handleSave = () => {
-    // 1) Get existing array of conversations from localStorage, if any
     const stored = localStorage.getItem("pastConversations");
     const pastConversations = stored ? JSON.parse(stored) : [];
 
-    // 2) Create a new conversation record
     const newConversation = {
       id: Date.now(), // unique ID
       timestamp: new Date().toLocaleString(),
-      messages: messages, // the entire array of messages
+      messages: messages,
     };
 
-    // 3) Append it to the array
     pastConversations.push(newConversation);
 
-    // 4) Save back to localStorage
     localStorage.setItem(
       "pastConversations",
       JSON.stringify(pastConversations)
     );
 
-    // 5) (Optional) Clear the current messages if you want to start fresh
-    // setMessages([]);
-
-    // 6) Navigate to /past to view the saved conversation(s)
     navigate("/past");
   };
 
@@ -366,7 +340,6 @@ export default function HomePage() {
         `}
       </style>
 
-      {/* The feedback modal (for "thumbs down") */}
       <FeedbackModal
         isOpen={isFeedbackOpen}
         onClose={() => setIsFeedbackOpen(false)}
@@ -511,8 +484,7 @@ export default function HomePage() {
             >
               Ask
             </button>
-            {/* Save button now appends the entire "messages" array 
-                  as a new conversation in localStorage */}
+
             <button
               onClick={handleSave}
               style={{
